@@ -1,0 +1,13 @@
+﻿nomination_id,employee_id,employee_name,experience_years,current_skills,training_requested,manager_approval,business_justification,score,rule_id,decision,matched_skills,missing_skills,reason,created_at
+1,101,Akshaya,3,"Python,Machine Learning,SQL",AI Training,true,1,70,R001,Waitlisted,Python,"Machine Learning,SQL",Score=70,2026-07-03T17:51:14.169Z
+2,102,Meena,5,"Python,Machine Learning,SQL",AI Training,true,1,100,R001,Approved,"Python,Machine Learning,SQL",,Score>70,2026-07-03T17:51:44.480Z
+3,103,Jeya,2,"Python,Machine Learning,SQL",AI Training,true,1,55,R001,Not Eligible,,"Python,Machine Learning,SQL",Score<70,2026-07-03T17:53:28.477Z
+4,104,Arun,3,"React,JavaScript,CSS",React Training,true,1,45,R003,Waitlisted,React,"JavaScript,CSS",Score=70,2026-07-15T13:22:27.216Z
+5,105,Karthick,0,"React,JavaScript,CSS",React Training,true,1,30,R003,Not Eligible,React,"JavaScript,CSS",Score<70,2026-07-15T13:23:41.297Z
+6,106,Priya,2,"C#,.NET Core,SQL Server",.NET Core Training,true,1,35,R004,Not Eligible,C#,".NET Core,SQL Server",Score<70,2026-07-15T13:26:21.207Z
+7,107,Divya,3,"Python,OOP,SQL",Python Training,true,1,50,R005,Approved,Python,"OOP,SQL",Score>70,2026-07-15T13:27:12.435Z
+8,108,Rahul,5,"Python,Pandas,Machine Learning",Data Science Training,true,1,60,R006,Not Eligible,Python,"Pandas,Machine Learning",Score<70,2026-07-15T13:28:11.239Z
+9,109,Vijay,6,"AWS,Linux,Networking",AWS Cloud Training,true,1,60,R008,Approved,AWS,"Linux,Networking",Score>70,2026-07-15T13:29:20.319Z
+10,110,Suresh,2,"Python,LLM,Prompt Engineering",AI & GenAI Training,true,1,50,R009,Not Eligible,Python,"LLM,Prompt Engineering",Score<70,2026-07-15T13:30:56.578Z
+11,111,Anitha,4,"Selenium,Java,TestNG",QA Automation Training,true,1,50,R010,Waitlisted,Selenium,"Java,TestNG",Score=70,2026-07-15T13:32:03.881Z
+12,112,Aruna,3,"Python,OOP,SQL",Python Training,true,1,50,R005,Not Eligible,Python,"OOP,SQL",Score<70,2026-07-15T15:08:13.323Z

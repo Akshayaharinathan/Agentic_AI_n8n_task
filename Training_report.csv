@@ -1,0 +1,13 @@
+nomination_id,employee_id,employee_name,experience_years,current_skills,training_requested,manager_approval,business_justification,score,rule_id,decision,matched_skills,missing_skills,reason
+1,101,Akshaya,5,"Python,Machine Learning,SQL",AI Training,TRUE,1,55,R001,Not Eligible,,"Python,Machine Learning,SQL",Score<70
+2,102,Meena,5,"Python,Machine Learning,SQL",AI Training,TRUE,1,100,R001,Approved,"Python,Machine Learning,SQL",,Score>70
+3,103,Jeya,2,"Python,Machine Learning,SQL",AI Training,TRUE,1,55,R001,Not Eligible,,"Python,Machine Learning,SQL",Score<70
+4,104,Arun,3,"React,JavaScript,CSS",React Training,TRUE,1,45,R003,Waitlisted,React,"JavaScript,CSS",Score=70
+5,105,Karthick,0,"React,JavaScript,CSS",React Training,TRUE,1,30,R003,Not Eligible,React,"JavaScript,CSS",Score<70
+6,106,Priya,2,"C#,.NET Core,SQL Server",.NET Core Training,TRUE,1,35,R004,Not Eligible,C#,".NET Core,SQL Server",Score<70
+7,107,Divya,3,"Python,OOP,SQL",Python Training,TRUE,1,50,R005,Approved,Python,"OOP,SQL",Score>70
+8,108,Rahul,5,"Python,Pandas,Machine Learning",Data Science Training,TRUE,1,60,R006,Not Eligible,Python,"Pandas,Machine Learning",Score<70
+9,109,Vijay,6,"AWS,Linux,Networking",AWS Cloud Training,TRUE,1,60,R008,Approved,AWS,"Linux,Networking",Score>70
+10,110,Suresh,2,"Python,LLM,Prompt Engineering",AI & GenAI Training,TRUE,1,50,R009,Not Eligible,Python,"LLM,Prompt Engineering",Score<70
+11,111,Anitha,4,"Selenium,Java,TestNG",QA Automation Training,TRUE,1,50,R010,Waitlisted,Selenium,"Java,TestNG",Score=70
+12,112,Aruna,3,"Python,OOP,SQL",Python Training,TRUE,1,50,R005,Not Eligible,Python,"OOP,SQL",Score<70

@@ -1,0 +1,582 @@
+{
+  "name": "Evaluate Training Nomination",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "training-nomination",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        -96
+      ],
+      "id": "3861914d-c864-49cb-bffe-496f7923d6f0",
+      "name": "Webhook",
+      "webhookId": "59384c53-6829-49d1-a274-7e37c32f434e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5da94d43-24e5-4396-8fa6-8744237d4ce0",
+              "leftValue": "={{$json.body.employee_id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "bcf50864-1158-471b-b7b9-03e7ca03f239",
+              "leftValue": "={{ $json.body.employee_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4580608b-b07b-4f1a-96d3-d5da5329070e",
+              "leftValue": "={{ $json.body.experience_years }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d7be315a-ecd5-4654-b534-0450973c73ac",
+              "leftValue": "={{ $json.body.training_requested }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        64
+      ],
+      "id": "0ee17bff-e4c3-49a5-84cc-39f11a4dd270",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "QLjlRIHw6tSGuUOk",
+          "mode": "list",
+          "cachedResultName": "training_rules",
+          "cachedResultUrl": "/projects/gkOH6QXdJAHdBUvF/datatables/QLjlRIHw6tSGuUOk"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "training_name",
+              "keyValue": "={{ $json.body.training_requested }}"
+            },
+            {
+              "keyName": "is_active",
+              "condition": "isTrue"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        48
+      ],
+      "id": "daf7aa24-69b4-49e7-a63d-d1838b643ffa",
+      "name": "Get row(s)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "body.training_requested",
+              "field2": "training_name"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        512,
+        -176
+      ],
+      "id": "57a27263-511a-46c3-86c7-2c1e4687b92e",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\":\"failed\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        320,
+        240
+      ],
+      "id": "a252b605-3814-4d73-8975-2780d4244225",
+      "name": "Failed response"
+    },
+    {
+      "parameters": {
+        "jsCode": "let score = 0;\n \nconst data = $input.first().json;\nconst emp = data.body;\nconst rule = data;\nlet decision=\"\";\nlet reason=\"\"\nconst rule_id=rule.rule_id\n \nif (emp.experience_years >= rule.min_experience_years) {\n  score += rule.experience_points;\n}\n \nlet matched = [];\nlet missing = [];\n \nconst skills = [\n  rule.required_skill_1,\n  rule.required_skill_2,\n  rule.required_skill_3\n];\nlet skill_set = skills.toString();\n \nfor (const s of skills) {\n  if (emp.current_skills.includes(s)) {\n    score += rule.skill_points_each;\n    matched.push(s);\n  } else {\n    missing.push(s);\n  }\n}\n\n\n \nif (emp.manager_approval) {\n  score += rule.manager_approval_points;\n}\n \nif (emp.business_justification) {\n  score += rule.justification_points;\n}\nif(score>70){\n  decision=\"Approved\"\n  reason=\"Score>70\"\n}\nelse if (score==70) {\n  decision=\"Waitlisted\"\n  reason=\"Score=70\"\n} else {\n  decision=\"Not Eligible\"\n  reason=\"Score<70\"\n  \n}\n \nreturn [{\n  json: {\n    ...emp,\n    rule_id,\n    skill_set,\n    score,\n    decision,\n    reason,\n    matched_skills: matched.toString(),\n    missing_skills: missing.toString()\n  }\n}];\n "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -176
+      ],
+      "id": "3524eaf5-5caf-48f0-8901-04176f33e00e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "XiJ8lCybKKTxHVFv",
+          "mode": "list",
+          "cachedResultName": "training_nominations",
+          "cachedResultUrl": "/projects/gkOH6QXdJAHdBUvF/datatables/XiJ8lCybKKTxHVFv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "manager_approval": "={{ $json.manager_approval }}",
+            "employee_id": "={{ $json.employee_id }}",
+            "employee_name": "={{ $json.employee_name }}",
+            "business_justification": "={{ $json.business_justification }}",
+            "training_requested": "={{ $json.training_requested }}",
+            "current_skills": "={{ $json.skill_set }}",
+            "experience_years": "={{ $json.experience_years }}",
+            "matched_skills": "={{ $json.matched_skills }}",
+            "score": "={{ $json.score }}",
+            "missing_skills": "={{ $json.missing_skills}}",
+            "created_at": "={{ $now }}",
+            "nomination_id": "={{ $json.nomination_id }}",
+            "rule_id": "={{ $json.rule_id }}",
+            "reason": "={{ $json.reason }}",
+            "decision": "={{ $json.decision }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nomination_id",
+              "displayName": "nomination_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "employee_id",
+              "displayName": "employee_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "employee_name",
+              "displayName": "employee_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "experience_years",
+              "displayName": "experience_years",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "current_skills",
+              "displayName": "current_skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "training_requested",
+              "displayName": "training_requested",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "manager_approval",
+              "displayName": "manager_approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "business_justification",
+              "displayName": "business_justification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rule_id",
+              "displayName": "rule_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "matched_skills",
+              "displayName": "matched_skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "missing_skills",
+              "displayName": "missing_skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        -176
+      ],
+      "id": "a4eebac2-9bac-4937-86c9-95cba51002f4",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        -176
+      ],
+      "id": "6ea2e35a-d7c4-47ae-aa46-4051139eab1c",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/Training_report.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        -176
+      ],
+      "id": "1c4d9cc3-8285-449e-a006-e9bb784bf0a1",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\":\"success\",\n   \"Nomination ID\":\"{{$json.nomination_id}}\",\n  \"Employee name\": \"{{$json.employee_name}}\",\n  \"Training requested\" :\"{{$json.training_requested}}\",\n\"Score\": \"{{$json.score}}\",\n\"Decision\": \"{{$json.decision}}\",\n\"Reason\" :\"{{$json.reason}}\",\n\"Report file path\": \"C:\\\\Users\\\\akshaya.th\\\\n8n-files\\\\Training_report\"\n\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2048,
+        -176
+      ],
+      "id": "d054a77a-2b88-43ab-8aa0-10c77802f394",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "XiJ8lCybKKTxHVFv",
+          "mode": "list",
+          "cachedResultName": "training_nominations",
+          "cachedResultUrl": "/projects/gkOH6QXdJAHdBUvF/datatables/XiJ8lCybKKTxHVFv"
+        },
+        "matchType": "allConditions",
+        "orderBy": true,
+        "orderByColumn": "created_at"
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1824,
+        -176
+      ],
+      "id": "0849cb1c-22ca-49ef-8bdf-113a42ea21eb",
+      "name": "Get row(s)1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failed response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Failed response": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4c837f8d-3b9b-4960-a540-44f96ad2fc42",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "31809a381b10ed1d1a2bd4f1a4e8568ad8a1fc97c837c8491c3cbcd9d9c3a7e9"
+  },
+  "nodeGroups": [],
+  "id": "QoqcuRIlf5dqRXAd",
+  "tags": []
+}

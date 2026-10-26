@@ -1,0 +1,11 @@
+﻿rule_id,training_name,min_experience_years,required_skill_1,required_skill_2,required_skill_3,manager_approval_points,experience_points,skill_points_each,justification_points,approval_score,waitlist_score,is_active,created_at
+R001,AI Training,3,Python,Machine Learning,SQL,20,20,15,15,80,60,true,2026-07-02T17:13:28.420Z
+R002,Web development Training,3,HTML,Javascript,CSS,10,10,10,10,50,30,true,2026-07-08T05:42:48.863Z
+R003,React Training,1,React,JavaScript,CSS,10,15,10,10,50,30,true,2026-07-08T05:50:27.636Z
+R004,.NET Core Training,3,C#,.NET Core,SQL Server,15,15,10,10,60,40,true,2026-07-08T05:52:57.726Z
+R005,Python Training,2,Python,OOP,SQL,10,15,15,10,55,35,true,2026-07-08T05:53:39.884Z
+R006,Data Science Training,3,Python,Pandas,Machine Learning,15,15,15,15,65,45,true,2026-07-08T05:54:27.408Z
+R007,DevOps Training,2,Docker,Jenkins,Linux,10,10,15,15,55,35,true,2026-07-08T05:55:09.449Z
+R008,AWS Cloud Training,4,AWS,Linux,Networking,20,15,15,10,70,50,true,2026-07-08T05:57:08.623Z
+R009,AI & GenAI Training,1,Python,LLM,Prompt Engineering,10,10,20,10,60,40,true,2026-07-08T05:58:58.777Z
+R010,QA Automation Training,2,Selenium,Java,TestNG,10,15,15,10,55,35,true,2026-07-08T06:00:00.233Z
